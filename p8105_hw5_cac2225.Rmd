@@ -17,6 +17,7 @@ First loading all necessary packages
 ```{r loading necessary packages}
 library(tidyverse)
 library(rvest)
+library(dplyr)
 
 ```
 
@@ -24,10 +25,35 @@ Using list.files function to list all of the file names within the data folder.
 
 ```{r using list.files func}
 
-getwd()
-list.files(path = "./data")
+folder = "./data"
+
+folder_files = list.files(folder)
+
+treat_id = 
+  sapply(strsplit(folder_files, split = ".", fixed = TRUE), function(x) (x[1]))
+
+file_names = tibble(
+  treatment_id = treat_id
+)
+```
+
+```{r parsing file_names column}
+
+
 
 ```
 
+
+```{r}
+file_name = function(x) {
+  names = list.files(path = "./data")
+
+  tibble(
+    names = names
+  )
+}
+
+
+```
 
 ##Problem 2
