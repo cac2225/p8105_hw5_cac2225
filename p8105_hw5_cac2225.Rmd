@@ -4,3 +4,30 @@ author: "Courtney Chan"
 date: "November 7, 2018"
 output: github_document
 ---
+
+#Homework 5
+
+##Problem 0
+A github repo and local R project was created, an Rmd file was produced, knitted, and committed to github.
+
+##Problem 1
+
+First loading all necessary packages
+
+```{r loading necessary packages}
+library(tidyverse)
+library(rvest)
+
+```
+
+Using list.files function to list all of the file names within the data folder.
+
+```{r using list.files func}
+
+getwd()
+list.files(path = "./data")
+
+```
+
+
+##Problem 2
