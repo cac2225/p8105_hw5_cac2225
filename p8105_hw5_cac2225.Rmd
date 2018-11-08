@@ -48,7 +48,7 @@ mutate(actual_files = map(file_names, reading_csv))
 
 ```
 
-The values within the lists are unnested into the dataframe. The dataframe is then tidied by gathering the values into a "week" variable and assigning corresponding observation values.
+The values within the lists are unnested into the dataframe. The dataframe is then tidied by gathering the values into a "week" variable and assigning corresponding observation values. Treatment and id variables are created. Week is mutated into a numeric variable. The treatment values are recoded into "control" and "experimental".
 
 ```{r tidying file_name dataframe}
 
@@ -77,5 +77,6 @@ ggplot(df_files, aes(x = week, y = obs_value, color = subj_id)) +
 
 ```
 
+A spaghetti plot is created, graphing the changes in observation values for each individual subject. The graphs are separated by treatment type - control and experimental. There is a huge difference between the trends seen in the observation values for the control versus experimental groups. The control groups' values remain fairly low for all 8 weeks, hovering from approximately -1 to 3. Whereas amongst the experimental group there is a large, steady increase of the observational values over the 1-8 weeks, starting at around 0 to3.5 and increasing to around 3 to 6.
 
 ##Problem 2
