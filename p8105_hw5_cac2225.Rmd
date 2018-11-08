@@ -104,7 +104,7 @@ homicide = homicide %>%
 ```{r summarizing by cities total homicides}
 
 total_num_homicides = homicide %>% 
-  group_by(city) %>% 
+  group_by(city_state) %>% 
   summarize(total_num_hom = n())
 
 ```
@@ -113,11 +113,18 @@ total_num_homicides = homicide %>%
 
 unsolved_homicides = homicide %>% 
   filter(disposition == "Closed without arrest" | disposition == "Open/No arrest") %>% 
-  group_by(city) %>% 
+  group_by(city_state) %>% 
   summarize(num_unsolved_hom = n())
 
 ```
 
-The number of total homicides are added up per city. The number of unsolved homicides based on disposition is added up per city.
+The number of total homicides are added up per city_state. The number of unsolved homicides based on disposition is added up per city_state.
 
+```{r proportion of unsolve homicides in Baltimore, MD}
 
+df_combined = merge(total_num_homicides, unsolved_homicides, by.x = "city_state", by.y = "city_state")
+
+proportion_unsolved = df_combined %>% 
+  filter(city_state == "Baltimore, MD") %>% prop.test(num_unsolved_hom, total_num_hom)
+
+```
