@@ -19,19 +19,32 @@ library(tidyverse)
 library(rvest)
 library(dplyr)
 library(readr)
+library(stringr)
 
 ```
 
 Using list.files function to list all of the file names within the data folder and creating a dataframe for the file names. The map function and read_csv function are used to map the contents of each csv file onto the file name dataframe.
 
-```{r creating df with filenames and contents of csv files}
+```{r naming data folder and vector for filenames}
 
 data_folder = "./data"
 
 file_names = list.files(data_folder)
 
+```
+
+```{r defining reading_csv function}
+
+reading_csv = function(x) {
+  
+  place_holder = read_csv(file.path(data_folder,x))
+}
+```
+
+```{r creating df for file_names and mapping csv values}
+
 df_files = data_frame(file_names = file_names) %>% 
-mutate(actual_files = map(file_names, ~read_csv(file.path(data_folder,.))))
+mutate(actual_files = map(file_names, reading_csv))
 
 ```
 
@@ -39,67 +52,17 @@ The values within the lists are unnested into the dataframe. The dataframe is th
 
 ```{r tidying file_name dataframe}
 
-df_files = unnest(df_files)
-
-test = read_csv("./data/con_01.csv") %>%
-week = gather(key = week, value = obs_value, week_1:week_8) %>% 
-    separate(week, into = c("remove", "week"), sep = "_")
-
-```
-
-
-```{r reading csv files function}
-
-reading_csv = function(file_names) {
-  
-  place_holder = read_csv(file_names)
-  
-  tibble()
-
-}
+df_files = unnest(df_files) %>% 
+  gather(key = week, value = obs_value, week_1:week_8) %>% 
+    separate(week, into = c("remove", "week"), sep = "_") %>% 
+  rename(treatment_id = file_names) %>%
+  mutate(treatment_id = str_replace(treatment_id, ".csv", "")) %>% separate(treatment_id, into = c("treatment", "subj_id"), sep = "_") %>% select(subj_id, treatment, week, obs_value, -starts_with("remove"))
 
 ```
 
-```{r iteration of read_csv function}
-
-output_df = map_df(file_names, reading_csv)
+```{r spaghetti plot}
 
 ```
-
-
-  
-
-
-```{r mapping function iterated}
-
-mapping = function(x) {
-  
-  tible(
-    treatment_id = treatment_id,
-    
-  )
-  
-}
-
-```
-
-
-```{r}
-
-
-```
-
-
-```{r tidying file_names}
-
-treat_id = 
-  sapply(strsplit(folder_files, split = ".", fixed = TRUE), function(x) (x[1]))
-
-file_names = file_names %>%
-  separate(treatment_id, c("treatment_arm", "subject_id"))
-
-```
-
 
 
 ##Problem 2
