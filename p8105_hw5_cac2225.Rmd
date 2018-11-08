@@ -80,3 +80,44 @@ ggplot(df_files, aes(x = week, y = obs_value, color = subj_id)) +
 A spaghetti plot is created, graphing the changes in observation values for each individual subject. The graphs are separated by treatment type - control and experimental. There is a huge difference between the trends seen in the observation values for the control versus experimental groups. The control groups' values remain fairly low for all 8 weeks, hovering from approximately -1 to 3. Whereas amongst the experimental group there is a large, steady increase of the observational values over the 1-8 weeks, starting at around 0 to3.5 and increasing to around 3 to 6.
 
 ##Problem 2
+
+The csv file is imported using the read_csv function and the dataset is cleaned.
+
+```{r}
+
+homicide = read_csv("./data2/homicide-data.csv") %>% 
+  janitor::clean_names()
+
+```
+
+Looking at the raw data, the number of observations and number of variables are `r dim(homicide)`. The variable names include `r names(homicide)`. The variables include identifiers describing the victim (id number, first and last name, sex and race), where and when the victim was found (using reported_date, longitude and latitude coordinates, city) and whether the case was closed or still open.
+
+A city_state variable is created using the functions paste and mutate.
+
+```{r creating city_state variable}
+
+homicide = homicide %>% 
+  mutate(city_state = paste(city,",",state))
+
+```
+
+```{r summarizing by cities total homicides}
+
+total_num_homicides = homicide %>% 
+  group_by(city) %>% 
+  summarize(total_num_hom = n())
+
+```
+
+```{r summarizing by cities number of unsolved homicides}
+
+unsolved_homicides = homicide %>% 
+  filter(disposition == "Closed without arrest" | disposition == "Open/No arrest") %>% 
+  group_by(city) %>% 
+  summarize(num_unsolved_hom = n())
+
+```
+
+The number of total homicides are added up per city. The number of unsolved homicides based on disposition is added up per city.
+
+
