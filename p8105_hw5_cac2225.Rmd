@@ -124,7 +124,11 @@ The number of total homicides are added up per city_state. The number of unsolve
 
 df_combined = merge(total_num_homicides, unsolved_homicides, by.x = "city_state", by.y = "city_state")
 
-proportion_unsolved = df_combined %>% 
-  filter(city_state == "Baltimore, MD") %>% prop.test(num_unsolved_hom, total_num_hom)
+proportion_unsolved_BMD = df_combined %>% 
+  filter(city_state == "Baltimore , MD")
+
+prop_BMD = prop.test(proportion_unsolved_BMD$num_unsolved_hom, proportion_unsolved_BMD$total_num_hom) 
+
+broom::tidy(prop_BMD)
 
 ```
