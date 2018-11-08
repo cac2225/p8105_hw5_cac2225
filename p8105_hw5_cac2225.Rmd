@@ -18,42 +18,88 @@ First loading all necessary packages
 library(tidyverse)
 library(rvest)
 library(dplyr)
+library(readr)
 
 ```
 
-Using list.files function to list all of the file names within the data folder.
+Using list.files function to list all of the file names within the data folder and creating a dataframe for the file names. The map function and read_csv function are used to map the contents of each csv file onto the file name dataframe.
 
-```{r using list.files func}
+```{r creating df with filenames and contents of csv files}
 
-folder = "./data"
+data_folder = "./data"
 
-folder_files = list.files(folder)
+file_names = list.files(data_folder)
 
-treat_id = 
-  sapply(strsplit(folder_files, split = ".", fixed = TRUE), function(x) (x[1]))
+df_files = data_frame(file_names = file_names) %>% 
+mutate(actual_files = map(file_names, ~read_csv(file.path(data_folder,.))))
 
-file_names = tibble(
-  treatment_id = treat_id
-)
 ```
 
-```{r parsing file_names column}
+The values within the lists are unnested into the dataframe. The dataframe is then tidied by gathering the values into a "week" variable and assigning corresponding observation values.
+
+```{r tidying file_name dataframe}
+
+df_files = unnest(df_files)
+
+test = read_csv("./data/con_01.csv") %>%
+week = gather(key = week, value = obs_value, week_1:week_8) %>% 
+    separate(week, into = c("remove", "week"), sep = "_")
+
+```
 
 
+```{r reading csv files function}
+
+reading_csv = function(file_names) {
+  
+  place_holder = read_csv(file_names)
+  
+  tibble()
+
+}
+
+```
+
+```{r iteration of read_csv function}
+
+output_df = map_df(file_names, reading_csv)
+
+```
+
+
+  
+
+
+```{r mapping function iterated}
+
+mapping = function(x) {
+  
+  tible(
+    treatment_id = treatment_id,
+    
+  )
+  
+}
 
 ```
 
 
 ```{r}
-file_name = function(x) {
-  names = list.files(path = "./data")
-
-  tibble(
-    names = names
-  )
-}
 
 
 ```
+
+
+```{r tidying file_names}
+
+treat_id = 
+  sapply(strsplit(folder_files, split = ".", fixed = TRUE), function(x) (x[1]))
+
+file_names = file_names %>%
+  separate(treatment_id, c("treatment_arm", "subject_id"))
+
+```
+
+
 
 ##Problem 2
