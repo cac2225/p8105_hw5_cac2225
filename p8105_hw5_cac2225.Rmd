@@ -118,7 +118,15 @@ unsolved_homicides = homicide %>%
 
 ```
 
-The number of total homicides are added up per city_state. The number of unsolved homicides based on disposition status is added up per city_state.
+The number of total homicides are added up per city_state. The number of unsolved homicides based on disposition status is added up per city_state. Comparing these two datsets, total_num_homicides and unsolved_homicides, there are 51 and 50 observations respectively. The extra city_state in the total_num_homicides set is Tusla, AL with one homicide. As a result it is removed since it is an outlier.
+
+```{r comparing the two sub datasets}
+
+total_num_homicides$city_state[!(total_num_homicides$city_state %in% unsolved_homicides$city_state)]
+
+```
+
+To determine the proportion of unsolved homicides over the total number homicides in Baltimore, MD, the datasets are merged by city_state. The dataset is filtered by Baltimore, MD and the prop.test function is used to determine the proportion estimate and confidence intervals. The values are then put into a tibble.
 
 ```{r proportion of unsolve homicides in Baltimore, MD}
 
@@ -130,5 +138,20 @@ df_combined_BMD = df_combined %>%
 prop_BMD = prop.test(df_combined_BMD$num_unsolved_hom, df_combined_BMD$total_num_hom) %>% broom::tidy()
 
 ouput_bmd = prop_BMD[c(1,5,6)]
+
+```
+
+```{r building prop.test function}
+
+
+
+```
+
+
+```{r mapping the prop.test function over city_state tibble}
+
+prop_city_states = 
+  df_city_state %>% 
+  mutate(prop_unsolved_hom = map(city_state, prop_function))
 
 ```
