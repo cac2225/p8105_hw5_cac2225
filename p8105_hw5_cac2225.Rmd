@@ -56,13 +56,24 @@ df_files = unnest(df_files) %>%
   gather(key = week, value = obs_value, week_1:week_8) %>% 
     separate(week, into = c("remove", "week"), sep = "_") %>% 
   rename(treatment_id = file_names) %>%
-  mutate(treatment_id = str_replace(treatment_id, ".csv", "")) %>% separate(treatment_id, into = c("treatment", "subj_id"), sep = "_") %>% select(subj_id, treatment, week, obs_value, -starts_with("remove"))
+  mutate(treatment_id = str_replace(treatment_id, ".csv", "")) %>% separate(treatment_id, into = c("treatment", "subj_id"), sep = "_") %>% select(subj_id, treatment, week, obs_value, -starts_with("remove")) %>% 
+  mutate(week = as.numeric(week)) %>% 
+  mutate(treatment = recode(treatment, "con" = "control", "exp" = "experimental"))
 
 df_files
 
 ```
 
 ```{r spaghetti plot}
+
+ggplot(df_files, aes(x = week, y = obs_value, color = subj_id)) + 
+  facet_grid(.~treatment) + 
+  geom_line() + 
+  labs(
+    title = "Observations over weeks 1-8 for each subject",
+    y = "Observation Values"
+  ) + 
+  theme(legend.background = element_rect(size = .5))
 
 ```
 
