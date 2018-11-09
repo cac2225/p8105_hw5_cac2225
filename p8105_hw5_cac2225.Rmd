@@ -117,13 +117,31 @@ unsolved_homicides = homicide %>%
 
 ```
 
-The number of total homicides are added up per city_state. The number of unsolved homicides based on disposition status is added up per city_state. Comparing these two datsets, total_num_homicides and unsolved_homicides, there are 51 and 50 observations respectively. The extra city_state in the total_num_homicides set is Tusla, AL with one homicide. As a result it is removed since it is an outlier.
+The number of total homicides are added up per city_state. The number of unsolved homicides based on disposition status is added up per city_state. 
 
 ```{r comparing the two sub datasets}
 
 total_num_homicides$city_state[!(total_num_homicides$city_state %in% unsolved_homicides$city_state)]
 
 ```
+
+
+Comparing these two datsets, total_num_homicides and unsolved_homicides, there are 51 and 50 observations respectively. The extra city_state in the total_num_homicides set that does not appear in the unsolved homicide list is Tusla, AL with one homicide. As a result it is removed since it is an outlier.
+
+```{r number of homicides in Tulsa, AL }
+
+total_num_homicides %>% 
+  filter(city_state == "Tulsa , AL")
+
+```
+
+```{r looking for Tulsa, AL in unsolved list}
+
+unsolved_homicides %>% 
+  filter(city_state == "Tulsa , AL")
+
+```
+
 
 To determine the proportion of unsolved homicides over the total number homicides in Baltimore, MD, the datasets are merged by city_state. The dataset is filtered by Baltimore, MD and the prop.test function is used to determine the proportion estimate and confidence intervals. The values are then output.
 
