@@ -17,7 +17,6 @@ First loading all necessary packages
 ```{r loading necessary packages}
 library(tidyverse)
 library(rvest)
-library(dplyr)
 library(readr)
 library(stringr)
 
@@ -126,7 +125,7 @@ total_num_homicides$city_state[!(total_num_homicides$city_state %in% unsolved_ho
 
 ```
 
-To determine the proportion of unsolved homicides over the total number homicides in Baltimore, MD, the datasets are merged by city_state. The dataset is filtered by Baltimore, MD and the prop.test function is used to determine the proportion estimate and confidence intervals. The values are then put into a tibble.
+To determine the proportion of unsolved homicides over the total number homicides in Baltimore, MD, the datasets are merged by city_state. The dataset is filtered by Baltimore, MD and the prop.test function is used to determine the proportion estimate and confidence intervals. The values are then output.
 
 ```{r proportion of unsolve homicides in Baltimore, MD}
 
@@ -135,23 +134,33 @@ df_combined = merge(total_num_homicides, unsolved_homicides, by.x = "city_state"
 df_combined_BMD = df_combined %>% 
   filter(city_state == "Baltimore , MD")
 
-prop_BMD = prop.test(df_combined_BMD$num_unsolved_hom, df_combined_BMD$total_num_hom) %>% broom::tidy()
+prop_BMD = broom::tidy(prop.test(df_combined_BMD$num_unsolved_hom, df_combined_BMD$total_num_hom))
 
 ouput_bmd = prop_BMD[c(1,5,6)]
 
 ```
 
+
+A function is built using prop.test for the unsolved and total parameters to be input for each city_state.
+
 ```{r building prop.test function}
+prop_func <- function(unsolved, total) {
+  
+  prop.test(unsolved, total) %>% 
+    broom::tidy() %>% 
+    select(estimate, conf.low, conf.high)
+}
+
+```
 
 
+```{r final dataframe}
+
+df_prop = 
+  df_combined %>% 
+  mutate(prop_unsolved = map2(num_unsolved_hom, total_num_hom, prop_func)) %>% 
+  unnest()
 
 ```
 
 
-```{r mapping the prop.test function over city_state tibble}
-
-prop_city_states = 
-  df_city_state %>% 
-  mutate(prop_unsolved_hom = map(city_state, prop_function))
-
-```
