@@ -134,14 +134,19 @@ df_combined = merge(total_num_homicides, unsolved_homicides, by.x = "city_state"
 df_combined_BMD = df_combined %>% 
   filter(city_state == "Baltimore , MD")
 
-prop_BMD = broom::tidy(prop.test(df_combined_BMD$num_unsolved_hom, df_combined_BMD$total_num_hom))
+prop_BMD = prop.test(df_combined_BMD$num_unsolved_hom, df_combined_BMD$total_num_hom)
 
-ouput_bmd = prop_BMD[c(1,5,6)]
+broom::tidy(prop_BMD)
+
+ouput_bmd = prop_BMD %>%
+  broom::tidy() %>% 
+  select(estimate, conf.low, conf.high)
+
 
 ```
 
 
-A function is built using prop.test for the unsolved and total parameters to be input for each city_state.
+A function is built using prop.test for the unsolved and total parameters to be input for each city_state. The estimates and confidence interval values are selected.
 
 ```{r building prop.test function}
 prop_func <- function(unsolved, total) {
@@ -161,6 +166,17 @@ df_prop =
   mutate(prop_unsolved = map2(num_unsolved_hom, total_num_hom, prop_func)) %>% 
   unnest()
 
+df_prop
+
 ```
 
+Using a pipeline and the created function, a tidy dataframe with each city_state, proportion esimate and confidence intervals is created.
 
+```{r plot estimates and CIs for each city}
+
+df_prop %>% 
+  ggplot(aes(fct_reorder(city_state, desc(estimate)), estimate)) + geom_bar(stat = "identity") + geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) + theme(axis.text.x = element_text(angle = 90)) + ggtitle("estimates and confidence intervals per city, state") + xlab("city, state") + ylab("estimate of proportion of unsolved homicides")
+
+```
+
+A plot is created using the final dataframe, plotting city/state versus estimates of proportions of unsolved homicides/ total homicides. Confidence interval values are indicated. The city/states are organized from largest proportion of unsolved homicides to smallest proportion. Chicago IL has the highest proportion of unsolved homicides while Richmond, Va has the lowest proportion of unsolved homicides.
